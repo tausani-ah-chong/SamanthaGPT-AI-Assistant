@@ -9,9 +9,9 @@ Built using GPT technology and leveraging Eleven Labs' AI-generated voices
 # WIP - TODO before release
 
 - [ ] Link openAI endpoints - get input from user microphone
-- [ ] Create a voice using Eleven labs for Samantha
+- [x] Create a voice using Eleven labs for Samantha
 - [ ] Use text-to-audio to generate voice from openAI response
-- [ ] Add welcome message from Samantha
+- [x] Add welcome message from Samantha
 - [ ] Add `cmd + K` hotkey to bring up prompt menu for input other than voice
 
 # After initial release
