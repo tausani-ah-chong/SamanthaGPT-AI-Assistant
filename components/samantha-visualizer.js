@@ -1,18 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-const SamanthaVisualizer = ({ scale }) => {
+const SamanthaVisualizer = ({ scale, experienceStarted }) => {
   const wrapRef = useRef(null);
   const initializedRef = useRef(false);
   
   // https://codepen.io/psyonline/pen/yayYWg
   useEffect(() => {
-    if (initializedRef.current) {
-      return;
-    }
-    
-    initializedRef.current = true;
-
     class CustomCurve extends THREE.Curve {
       constructor() {
         super();
@@ -43,7 +37,7 @@ const SamanthaVisualizer = ({ scale }) => {
     const areaWidth = window.innerWidth;
     const areaHeight = window.innerHeight;
 
-    const canvasSize = Math.min(areaWidth, areaHeight) * scale;
+    const canvasSize = Math.min(areaWidth, areaHeight);
   
     const length = 30;
     const radius = 5.6;
@@ -58,7 +52,7 @@ const SamanthaVisualizer = ({ scale }) => {
     const group = new THREE.Group();
     let mesh, ringcover, ring;
   
-    const camera = new THREE.PerspectiveCamera((60 * scale), 1, 1, 10000);
+    const camera = new THREE.PerspectiveCamera((50), 1, 1, 10000);
     camera.position.z = 150;
   
     const scene = new THREE.Scene();
@@ -101,17 +95,24 @@ const SamanthaVisualizer = ({ scale }) => {
     renderer.setSize(canvasSize, canvasSize);
     renderer.setClearColor("#DC5037");
   
+    if (wrap.children.length > 0) {
+      wrap.removeChild(wrap.firstChild);
+    }
     wrap.appendChild(renderer.domElement);
-  
-    document.body.addEventListener("mousedown", start, false);
-    document.body.addEventListener("touchstart", start, false);
-    document.body.addEventListener("mouseup", back, false);
-    document.body.addEventListener("touchend", back, false);
   
     animate();
 
+    if (experienceStarted === true) {
+      console.log('experience started');
+
+      start()
+    }
+
     function start() {
       toend = true;
+      setTimeout(() => {
+        back()
+      }, 2500);
     }
   
     function back() {
@@ -123,17 +124,7 @@ const SamanthaVisualizer = ({ scale }) => {
   
       animatestep = Math.max(0, Math.min(240, toend ? animatestep + 1 : animatestep - 4));
       acceleration = easing(animatestep, 0, 1, 240);
-  
-      if (acceleration > 0.35) {
-        progress = (acceleration - 0.35) / 0.65;
-        group.rotation.y = (-Math.PI / 2) * progress;
-        group.position.z = 50 * progress;
-        progress = Math.max(0, (acceleration - 0.97) / 0.03);
-        mesh.material.opacity = 1 - progress;
-        ringcover.material.opacity = ring.material.opacity = progress;
-        ring.scale.x = ring.scale.y = 0.9 + 0.1 * progress;
-      }
-  
+
       renderer.render(scene, camera);
     }
   
@@ -142,12 +133,12 @@ const SamanthaVisualizer = ({ scale }) => {
       render();
       requestAnimationFrame(animate);
     }
-  
+
     function easing(t, b, c, d) {
       if ((t /= d / 2) < 1) return (c / 2) * t * t + b;
       return (c / 2) * ((t -= 2) * t * t + 2) + b;
     }
-  }, [scale]);
+  }, [experienceStarted, scale]);
 
   return (
     <div
